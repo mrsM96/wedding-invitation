@@ -294,8 +294,8 @@
 
             <form id="rsvpForm" class="space-y-5">
                 <div>
-                    <label class="block text-xs uppercase tracking-wider text-amber-300 mb-1.5 font-bold">Nama *</label>
-                    <input type="text" id="guestName" required placeholder="Contoh: Ahmad " class="w-full bg-navy-darker border border-yellow-400/30 rounded-xl p-3.5 text-sm text-gray-100 placeholder-gray-400 focus:outline-none focus:border-yellow-300 transition shadow-inner">
+                    <label class="block text-xs uppercase tracking-wider text-amber-300 mb-1.5 font-bold">Nama*</label>
+                    <input type="text" id="guestName" required placeholder="Contoh: Ahmad" class="w-full bg-navy-darker border border-yellow-400/30 rounded-xl p-3.5 text-sm text-gray-100 placeholder-gray-400 focus:outline-none focus:border-yellow-300 transition shadow-inner">
                 </div>
 
                 <div>
@@ -354,53 +354,28 @@
     <!-- FIREBASE MODULE SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Environment Config - Replace placeholders with your Firebase project details
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'fitrah-yuzairy-wedding';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : {
-                apiKey: "AIzaSyC_xS-M-hYLM4cRmraHRVDswZ9YPL2qK4g",
-                authDomain: "fitrah-yuzairy-wedding.firebaseapp.com",
-                projectId: "fitrah-yuzairy-wedding",
-                storageBucket: "fitrah-yuzairy-wedding.firebasestorage.app",
-                messagingSenderId: "764641448462",
-                appId: "1:764641448462:web:ca14a82ca3eeea7ddbe25f",
-                measurementId: "G-H47YB6KZQX"
-            };
+        // Your Firebase config object
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_xS-M-hYLM4cRmraHRVDswZ9YPL2qK4g",
+            authDomain: "fitrah-yuzairy-wedding.firebaseapp.com",
+            projectId: "fitrah-yuzairy-wedding",
+            storageBucket: "fitrah-yuzairy-wedding.firebasestorage.app",
+            messagingSenderId: "764641448462",
+            appId: "1:764641448462:web:ca14a82ca3eeea7ddbe25f",
+            measurementId: "G-H47YB6KZQX"
+        };
 
-        // Initialize Firebase App
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getFirestore(app);
 
-        let currentUser = null;
+        // Firestore Path
+        const rsvpCollectionRef = collection(db, 'rsvps');
 
-        // Firestore Path (Mandatory Path Rule): /artifacts/{appId}/public/data/rsvps
-        const rsvpCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'rsvps');
-
-        // Authenticate User First
-        async function authenticate() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    const userCredential = await signInWithCustomToken(auth, __initial_auth_token);
-                    currentUser = userCredential.user;
-                } else {
-                    const userCredential = await signInAnonymously(auth);
-                    currentUser = userCredential.user;
-                }
-                listenToRSVPs();
-            } catch (err) {
-                console.error("Authentication Error:", err);
-            }
-        }
-
-        // Realtime Listener using simple collection query
+        // Start listening to real-time RSVPs immediately without waiting for auth
         function listenToRSVPs() {
-            if (!currentUser) return;
-
             onSnapshot(rsvpCollectionRef, (snapshot) => {
                 let total = 0;
                 let attendingRsvps = 0;
@@ -454,7 +429,6 @@
                 return;
             }
 
-            // Sort by timestamp if available
             wishes.sort((a, b) => {
                 const timeA = a.timestamp?.seconds || 0;
                 const timeB = b.timestamp?.seconds || 0;
@@ -479,7 +453,6 @@
             }).join('');
         }
 
-        // Helper to prevent XSS
         function escapeHtml(str) {
             return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
@@ -492,15 +465,9 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            if (!currentUser) {
-                showAlert('Sila tunggu sebentar, sistem sedang bersedia...', 'bg-yellow-500/20 text-amber-200 border border-yellow-400/40');
-                return;
-            }
-
             const name = document.getElementById('guestName').value.trim();
             const status = document.getElementById('attendanceStatus').value;
             const pax = status === 'Hadir' ? document.getElementById('paxCount').value : "0";
-            const contact = document.getElementById('contactNumber').value.trim();
             const wishes = document.getElementById('guestWishes').value.trim();
 
             submitBtn.disabled = true;
@@ -511,7 +478,6 @@
                     name,
                     status,
                     pax: Number(pax),
-                    contact,
                     wishes,
                     timestamp: serverTimestamp()
                 });
@@ -537,7 +503,6 @@
             }, 6000);
         }
 
-        // Toggle Pax dropdown display based on Attendance Status
         const attendanceSelect = document.getElementById('attendanceStatus');
         const paxGroup = document.getElementById('paxGroup');
         attendanceSelect.addEventListener('change', (e) => {
@@ -548,7 +513,8 @@
             }
         });
 
-        authenticate();
+        // Start real-time listener directly
+        listenToRSVPs();
     </script>
 
     <script>
