@@ -294,8 +294,8 @@
 
             <form id="rsvpForm" class="space-y-5">
                 <div>
-                    <label class="block text-xs uppercase tracking-wider text-amber-300 mb-1.5 font-bold">Nama Penuh *</label>
-                    <input type="text" id="guestName" required placeholder="Contoh: Ahmad bin Razak" class="w-full bg-navy-darker border border-yellow-400/30 rounded-xl p-3.5 text-sm text-gray-100 placeholder-gray-400 focus:outline-none focus:border-yellow-300 transition shadow-inner">
+                    <label class="block text-xs uppercase tracking-wider text-amber-300 mb-1.5 font-bold">Nama *</label>
+                    <input type="text" id="guestName" required placeholder="Contoh: Ahmad " class="w-full bg-navy-darker border border-yellow-400/30 rounded-xl p-3.5 text-sm text-gray-100 placeholder-gray-400 focus:outline-none focus:border-yellow-300 transition shadow-inner">
                 </div>
 
                 <div>
@@ -315,11 +315,6 @@
                         <option value="4">4 Orang</option>
                         <option value="5">5 Orang</option>
                     </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs uppercase tracking-wider text-amber-300 mb-1.5 font-bold">Nombor Telefon / WhatsApp *</label>
-                    <input type="tel" id="contactNumber" required placeholder="Contoh: 0123456789" class="w-full bg-navy-darker border border-yellow-400/30 rounded-xl p-3.5 text-sm text-gray-100 placeholder-gray-400 focus:outline-none focus:border-yellow-300 transition shadow-inner">
                 </div>
 
                 <div>
@@ -367,12 +362,13 @@
         const firebaseConfig = typeof __firebase_config !== 'undefined' 
             ? JSON.parse(__firebase_config) 
             : {
-                apiKey: "YOUR_ACTUAL_API_KEY",
-                authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-                projectId: "YOUR_PROJECT_ID",
-                storageBucket: "YOUR_PROJECT_ID.appspot.com",
-                messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-                appId: "YOUR_APP_ID"
+                apiKey: "AIzaSyC_xS-M-hYLM4cRmraHRVDswZ9YPL2qK4g",
+                authDomain: "fitrah-yuzairy-wedding.firebaseapp.com",
+                projectId: "fitrah-yuzairy-wedding",
+                storageBucket: "fitrah-yuzairy-wedding.firebasestorage.app",
+                messagingSenderId: "764641448462",
+                appId: "1:764641448462:web:ca14a82ca3eeea7ddbe25f",
+                measurementId: "G-H47YB6KZQX"
             };
 
         // Initialize Firebase App
